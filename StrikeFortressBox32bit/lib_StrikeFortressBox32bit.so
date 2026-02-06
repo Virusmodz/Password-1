@@ -1,0 +1,1637 @@
+#include <list>
+#include <vector>
+#include <string.h>
+#include <pthread.h>
+#include <thread>
+#include <cstring>
+#include <jni.h>
+#include <unistd.h>
+#include <fstream>
+#include <iostream>
+#include <dlfcn.h>
+#include <string>
+#include <map>
+#include <cmath>  
+#include <cfloat> 
+#include <unordered_set>
+#include <cstdlib>
+#include <sstream>
+#include <vector> 
+#include <map>
+#include "Includes/Logger.h"
+#include "Includes/obfuscate.h"
+#include "Includes/Utils.h"
+#include "KittyMemory/MemoryPatch.h"
+#include "Menu/Setup.h"
+#include "Includes/enc.h"
+#include "DrawESP/VirusModz.h"
+#include <thread>  
+#include <chrono>  
+#include <atomic> 
+
+
+
+
+AadilDrawing aadildrawing;
+
+
+
+//Target lib here
+#define targetLibName OBFUSCATE("libcocos2dcpp.so")
+
+#include "Includes/Macros.h"
+
+
+struct My_Patches {
+ MemoryPatch lagitshealf; 
+} hexPatches;
+
+float destincence;
+float isboost = 0;
+float distence;
+bool isteleport, autothrowg, tpnadeto, isfring, isteleport2, tellkill2;
+double isFps;
+bool modified = false;
+int Esize, switc, WeaponID, GrenadeID;
+bool EnableESP, ESPLine, ESPtext, isProxy, plIDS, smapD, espname, sendfp, maxplauers, isdisappear, Autolag, iswwmanspwn;
+int Startpos, Endpos, IsRoundsPerFire;
+
+void* weapon = NULL;
+
+float positionsX, positionsY, getfirdsingde, issetAccuracyMod, issetRate;
+
+bool isAimbot, automille, isadrasss, isadrasssEP, copyid, bullet_trake, isseendpunc, isammos, Isbulletrenhe, isaimsight, isremovemine, isremoveItem, showenemyl;
+
+constexpr float PI_F = 3.14159265358979323846f;
+constexpr float RAD2DEG = 180.0f / PI_F;
+
+int (*getTeamId)(void* instance); // get players team id like 1 to 7, 1 = solo 
+
+int (*gethp)(void* instance); // get players health max hp 100
+
+bool (*isdead)(void* instance); // chake players dead or not true = dead
+
+bool (*iscrousg)(void* instance);
+
+float (*getFireAngle)(void* instance); // get enemy fire angle 0 to 360
+
+float (*getRotation)(void* instance); // get enemy rotation angle 0 to 360
+
+bool (*isDucked)(void* instance); // to chake enemy croush or not croush = true
+
+bool (*getThrustFactor)(void* instance); // to chake enemy flying or not
+
+std::string (*getPeerID)(void* instance); // to chake players id
+
+void (*showLabel)(void *instance);
+
+
+using namespace std;
+
+unordered_set<void *> playerslist;
+
+void *(*Deagle6create)();         //_ZN6DEAGLE6createEv
+void *(*Magnum6create)();         //_ZN6MAGNUM6createEv
+void *(*Tec96create)();           //_ZN4TEC96createEv
+void *(*GdDeagle6create)();       //_ZN7GDEAGLE6createEv
+void *(*Uzi6create)();            //_ZN3UZI6createEv
+void *(*Mp56create)();            //_ZN2MP56createEv
+void *(*Tavor6create)();          //_ZN5TAVOR6createEv
+void *(*Ak476create)();           //_ZN5AK476createEv
+void *(*Xm86create)();            //
+void *(*M166create)();            //_ZN4M166createEv
+void *(*Aa126create)();           //_ZN4AA126createEv
+void *(*Spas126create)();         //_ZN6SPAS126createEv
+void *(*M18816create)();          //_ZN6M18816createEv
+void *(*M146create)();            //_ZN4M146createEv
+void *(*M93ba6create)();          //_ZN6M93BA6createEv
+void *(*Flamethrower6create)();   //_ZN10FLAMETHROWER6createEv
+void *(*Rg66create)();            //_ZN2RG66createEv
+void *(*Smaw6create)();           //_ZN4SMAW6createEv
+void *(*Sawgun6create)();         //_ZN6SAW6createEv
+void *(*Minigun6create)();        //_ZN7MINIGUN6createEv
+void *(*Machete6create)();        //_ZN7MACHETE6createEv
+void *(*FlagBlue6create)();       //_ZN8FLAGBLUE6createEv
+void *(*FlagOrange6create)();     //_ZN9FLAGORANGE6createEv
+void *(*BombBlue6create)();       //_ZN8BOMBBLUE6createEv
+void *(*BombOrange6create)();     //_ZN9BOMBORANGE6createEv
+void *(*Phasr6create)();          //_ZN5PHASR6createEv
+
+
+void *(*EMPNADEcreate)();     
+void *(*FRAGNADEcreate)();     
+void *(*GASNADEcreate)();     
+void *(*PROXYNADEcreate)();     
+
+
+
+
+
+
+void* enemyPlayers = NULL;
+void* localPlayer = NULL;
+void* currentTarget = NULL;   
+void* bestCandidate = NULL;    
+float closestDistSq = FLT_MAX; 
+
+
+int cachedLocalTeam = -1;
+float cachedLocalX = 0.0f;
+float cachedLocalY = 0.0f;
+float isplayerspeed, istimescal, issetSpeedMod, teleportX, teleportY;
+
+void* (*sharedDirector)();
+
+void (*setAnimationInterval)(void* instance, double fps);
+
+float (*GetPositionY)(void* instance);
+float (*GetPositionX)(void* instance);
+
+void (*SetPosition)(void* instance, float x, float y);
+
+void (*SettPositionX)(void* instance, float X);
+void (*SettPositionY)(void* instance, float Y);
+
+
+void (*removeMine)(void* instance, bool ch);
+
+void (*old_ProxyMine)(void *instance, float dt);
+void ProxyMine(void *instance, float dt){
+    if(instance != NULL){
+        
+        if(isremovemine){
+            removeMine(instance, true);      
+        }
+        
+        
+    }
+  return old_ProxyMine(instance, dt);
+}
+
+void (*removeAllWeapons)(void* instance);
+
+void (*shouldSpawnItem)(void* instance, void* weapon);
+
+
+void (*old_WeaponManager)(void *instance, float dt);
+void WeaponManager(void *instance, float dt){
+    if(instance != NULL){
+        
+        if(isremoveItem){
+            removeAllWeapons(instance);      
+        }
+        
+      
+        
+        if(iswwmanspwn && weapon != NULL){
+        shouldSpawnItem(instance, weapon);
+        }
+        
+        
+    }
+  return old_WeaponManager(instance, dt);
+}
+
+
+//#include <string>
+void (*old_CCScheduler)(void *instance, float timespeed);
+void CCScheduler(void *instance, float timespeed){
+
+float gettis = timespeed * istimescal;
+
+if(instance != NULL){
+if (istimescal > 0){
+old_CCScheduler(instance, gettis);
+
+}
+
+ void* up = sharedDirector();
+  if(isFps > 0){
+      
+    setAnimationInterval(up, isFps);
+      
+  }
+  
+  static auto last_call = std::chrono::steady_clock::now();
+  
+  if (Autolag) {
+    auto now = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_call);
+
+    if (elapsed.count() >= 2000) {
+        if (modified) {
+            hexPatches.lagitshealf.Restore();
+            modified = false;
+        } else {
+            hexPatches.lagitshealf.Modify();
+            modified = true;
+        }
+        last_call = now;
+    }
+} else {
+    // Automatically restore if Autolag is turned off
+    if (modified) {
+        hexPatches.lagitshealf.Restore();
+        modified = false;
+    }
+}
+
+}
+return old_CCScheduler(instance, timespeed);
+
+}
+
+bool (*FRAGNADEinit)(void* instance);
+
+void (*Old_fragnade)(void* instance ,float dt);
+    void fragnade(void *instance, float dt){
+    if (instance != NULL && currentTarget != NULL) {
+       
+    float y = GetPositionY(currentTarget);
+    float x =  GetPositionX(currentTarget);
+       
+       if (tpnadeto){
+       SettPositionX(instance, x);
+       SettPositionY(instance, y);
+       }
+       
+    
+        
+    }
+    return Old_fragnade(instance, dt);
+} 
+
+float testing1;
+
+void (*Old_LaserSight)(void* instance ,float dt, float st);
+    void LaserSight(void *instance, float dt, float st){
+    if (instance != NULL) {
+       
+       testing1 = st;
+    
+        
+    }
+    return Old_LaserSight(instance, dt, st);
+} 
+
+
+void (*showLabel1)(void *instance);
+
+void (*old_lSoldierView)(void* instance, float xd);
+void lSoldierView(void* instance, float xd){
+if(instance != NULL){
+
+
+if (showenemyl){
+showLabel1(instance);
+}
+
+
+}
+return old_lSoldierView(instance, xd);
+
+}
+
+void (*setRate)(void *instance, float ret);
+void (*setAccuracyMod)(void *instance, float ret);
+void (*setSpeedMod)(void *instance, float ret);
+void (*setClip)(void *instance, int ammo);
+float (*getRate)(void* instance);
+
+
+std::map<void*, float> originalRateStorage;
+
+
+
+
+void (*old_Weapon)(void *instance, float dt);
+
+void Weapon(void *instance, float dt) {
+    if (instance != NULL) {
+        
+        
+        
+        if (issetSpeedMod > 0){
+            
+            setSpeedMod(instance, issetSpeedMod);
+        } else {
+            setSpeedMod(instance, 1);
+            
+        }
+        
+ 
+        if (originalRateStorage.find(instance) == originalRateStorage.end()) {
+       
+            float realOriginal = getRate(instance);
+            originalRateStorage[instance] = realOriginal;
+        }
+        if (originalRateStorage.count(instance) > 0) {
+    
+        float baseRate = originalRateStorage[instance];
+        if (issetRate > 0) {       
+            float modifiedRate = baseRate * (1.0f - issetRate);
+            setRate(instance, modifiedRate);
+        } else {      
+            setRate(instance, baseRate);
+            originalRateStorage.erase(instance);
+        }
+      } 
+         
+      if (isammos){
+       setClip(instance, 99);
+
+         }    
+    }
+    return old_Weapon(instance, dt);
+}
+
+float (*old_bulletrenhe)(void *instance);
+float bulletrenhe(void *instance) {
+    if (instance != NULL && Isbulletrenhe) {
+          return 999999;
+    }
+    return old_bulletrenhe(instance);
+}
+
+int (*old_RoundsPerFire)(void *instance);
+int RoundsPerFire(void *instance) {
+    if (instance != NULL && IsRoundsPerFire > 0) {
+          return IsRoundsPerFire;
+    }
+    return old_RoundsPerFire(instance);
+}
+
+void (*Old_gasnade)(void* instance ,float dt);
+    void gasnade(void *instance, float dt){
+    if (instance != NULL && currentTarget != NULL) {
+       
+    float y = GetPositionY(currentTarget);
+    float x =  GetPositionX(currentTarget);
+       
+       if (tpnadeto){
+       SettPositionX(instance, x);
+       SettPositionY(instance, y);
+       }
+       
+    
+        
+    }
+    return Old_gasnade(instance, dt);
+} 
+
+void (*old_proxynade)(void* instance ,float dt);
+    void proxynade(void *instance, float dt){
+    if (instance != NULL && currentTarget != NULL) {
+       
+    float y = GetPositionY(currentTarget);
+    float x =  GetPositionX(currentTarget);
+       
+       if (tpnadeto){
+       SettPositionX(instance, x);
+       SettPositionY(instance, y);
+       }
+       
+    
+        
+    }
+    return old_proxynade(instance, dt);
+} 
+
+void (*old_empnade)(void* instance ,float dt);
+    void empnade(void *instance, float dt){
+    if (instance != NULL && currentTarget != NULL) {
+       
+    float y = GetPositionY(currentTarget);
+    float x =  GetPositionX(currentTarget);
+       
+       if (tpnadeto){
+       SettPositionX(instance, x);
+       SettPositionY(instance, y);
+       }
+       
+    
+        
+    }
+    return old_empnade(instance, dt);
+} 
+
+
+
+
+float (*old_playerspeed)(void *instance);
+float playerspeed(void *instance){
+if (instance != NULL) {
+if(isplayerspeed > 0){
+
+return (float) isplayerspeed;
+}
+}
+return old_playerspeed(instance);
+}
+
+bool (*old_isfire)(void* instance);
+bool isfire(void* instance){
+if(instance != NULL){
+
+isfring = old_isfire(instance);
+
+} 
+return old_isfire(instance);
+
+} 
+
+void (*sendPlayerPunch)(void* instance, void *CCObject);
+void (*setMaxPlayers2)(void* instance, int set);
+
+
+void (*old_updateNetworkObjects)(void* instance, float xd);
+void updateNetworkObjects(void* instance, float xd) {
+
+if(instance != NULL){
+if (isseendpunc){
+sendPlayerPunch(instance, instance);
+}
+if (maxplauers){
+setMaxPlayers2(instance, 12);
+}
+}
+
+return old_updateNetworkObjects(instance, xd);
+}
+
+void (*old_setMaxPlayers)(void *instance, int pl);
+void setMaxPlayers(void *instance, int pl){
+if (instance != NULL){
+if (maxplauers){
+old_setMaxPlayers(instance, 12);
+}
+
+
+}
+return old_setMaxPlayers(instance, pl);
+}
+
+
+
+void teleporting(){
+	
+		
+		if (playerslist.empty()) {
+          return; 
+          }
+		size_t size = playerslist.size();
+		int random_steps = rand() % size; 
+
+        
+          auto it = playerslist.begin();
+       
+        std::advance(it, random_steps); 
+        
+          void* randomTarget = *it;
+          
+          void* rnd = NULL;
+
+		  if (getTeamId(localPlayer) > 1 && getTeamId(randomTarget) != getTeamId(localPlayer)) {
+       
+       
+        rnd = randomTarget;
+            } else if (getTeamId(localPlayer) == 1) {
+       rnd = randomTarget;
+ 
+    } else {
+        playerslist.erase(randomTarget);
+        
+    }
+	
+    
+		if (!isdead(randomTarget) || gethp(randomTarget) > 0){      
+		if (rnd ){
+			void* targetBody = *(void **)((char *)rnd + 0x148);
+           if (targetBody != NULL){
+           float targetX = *(float *)((char *)targetBody + 0x2c);
+		   float targetY = *(float *)((char *)targetBody + 0x34);
+		   void *body = *(void **)((char *)localPlayer + 0x148);
+     if (body != NULL) {
+        float *posX = (float *)((char *)body + 0x2c);
+        float *posY = (float *)((char *)body + 0x34);
+          *posX = targetX;
+          *posY = targetY;
+                 isteleport = false;
+                        
+               }
+               }
+			
+		}
+		}
+		
+	}
+    
+    
+void (*addWeapon)(void* instance, void *weapons);
+void (*addGrenade)(void* instance, void *weapons);
+void (*activatePlayer)(void *instance);
+void (*deactivatePlayer)(void *instance);
+
+
+void (*old_SoldierLocalController)(void* instance ,float dt);
+void SoldierLocalController(void *instance, float dt){
+    if (instance != NULL) {
+    
+    static auto last_call = std::chrono::steady_clock::now();
+  
+  if (tellkill2){
+  
+  auto now = std::chrono::steady_clock::now();
+  auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_call);
+                    
+     if (elapsed.count() >= 3000) {
+     teleporting();
+     last_call = now;
+     }
+  }
+        
+       
+        localPlayer = instance;
+      
+        void *body = *(void **)((char *)instance + 0x148);
+    if (body != NULL) {
+        
+        float *posX = (float *)((char *)body + 0x2c);
+            float *posY = (float *)((char *)body + 0x34);
+
+            if (isteleport2) {
+                *posX = (float) teleportX;
+                *posY = (float) teleportY;
+                
+                isteleport2 = false;
+            }
+
+            float *getBodyVelocityX = (float *)((char *)body + 0x38);
+            float *getBodyVelocityY = (float *)((char *)body + 0x3c);
+            
+        //   getVelocityX = *getBodyVelocityX;
+         //  getVelocityY = *getBodyVelocityY;
+    } 
+    
+        if (WeaponID == 1) weapon = Deagle6create();
+        else if (WeaponID == 2) weapon = Magnum6create();
+        else if (WeaponID == 3) weapon = Tec96create();
+        else if (WeaponID == 4) weapon = GdDeagle6create();
+        else if (WeaponID == 5) weapon = Uzi6create();
+        else if (WeaponID == 6) weapon = Mp56create();
+        else if (WeaponID == 7) weapon = Tavor6create();
+        else if (WeaponID == 8) weapon = Ak476create();
+        else if (WeaponID == 9) weapon = Xm86create();
+        else if (WeaponID == 10) weapon = M166create();
+        else if (WeaponID == 11) weapon = Aa126create();
+        else if (WeaponID == 12) weapon = Spas126create();
+        else if (WeaponID == 13) weapon = M18816create();
+        else if (WeaponID == 14) weapon = M146create();
+        else if (WeaponID == 15) weapon = M93ba6create();
+        else if (WeaponID == 16) weapon = Flamethrower6create();
+        else if (WeaponID == 17) weapon = Rg66create();
+        else if (WeaponID == 18) weapon = Smaw6create();
+        else if (WeaponID == 19) weapon = Sawgun6create();
+        else if (WeaponID == 20) weapon = Minigun6create();
+        else if (WeaponID == 21) weapon = Machete6create();
+        else if (WeaponID == 22) weapon = FlagBlue6create();
+        else if (WeaponID == 23) weapon = FlagOrange6create();
+        else if (WeaponID == 24) weapon = BombBlue6create();
+        else if (WeaponID == 25) weapon = BombOrange6create();
+        else if (WeaponID == 26) weapon = Phasr6create();
+
+        if (weapon != NULL && WeaponID > 0) {
+            addWeapon(instance, weapon);
+            WeaponID = 0;
+        }
+       
+       void *grenade = NULL;
+        if (GrenadeID == 1){
+            grenade = EMPNADEcreate();
+        } else if (GrenadeID == 2){
+            grenade = FRAGNADEcreate();
+        } else if (GrenadeID == 3){
+            grenade = PROXYNADEcreate();
+        } else if (GrenadeID == 4){
+            grenade = GASNADEcreate();
+        }
+        
+         if (grenade != NULL) {
+            addGrenade(instance, grenade);
+            GrenadeID = 0;
+        }
+        
+        if (isdisappear && !isdead(instance)) {
+            deactivatePlayer(instance);
+            isdisappear = false;
+        } else if (isdisappear && isdead(instance)) {
+            activatePlayer(instance);
+            isdisappear = false;
+        }
+
+        
+       
+        currentTarget = bestCandidate;
+
+     
+        closestDistSq = FLT_MAX; 
+        bestCandidate = NULL;
+
+        
+        if (getTeamId) cachedLocalTeam = getTeamId(instance);
+        if (GetPositionX) cachedLocalX = GetPositionX(instance);
+        if (GetPositionY) cachedLocalY = GetPositionY(instance);
+    } else {
+        localPlayer = NULL; 
+    }
+    
+
+    
+    return old_SoldierLocalController(instance, dt);
+} 
+
+
+
+void (*old_removebody)(void* instance);
+void removebody(void* instance){
+if (instance != NULL){
+playerslist.erase(instance);
+
+} 
+return old_removebody(instance);
+} 
+
+
+void (*old_SoldierRemoteController)(void* instance, float dt);
+void SoldierRemoteController(void* instance, float dt){
+    
+    if (instance != NULL) {
+    
+  Esize = playerslist.size();
+        
+     
+    
+   enemyPlayers = instance;
+	
+    if (getTeamId(localPlayer) > 1 && getTeamId(instance) != getTeamId(localPlayer) && !isdead(instance) || gethp(instance) > 0) {
+       
+    playerslist.insert(instance);
+    } else if (!isdead(instance) || gethp(instance) > 0 && getTeamId(localPlayer) == 1) {
+    playerslist.insert(instance);
+ 
+    } else {
+        playerslist.erase(instance);
+        
+    }
+	
+    	if(isteleport){
+		teleporting();
+		
+	}
+	
+    
+    
+    
+    
+    if (localPlayer != NULL) {
+        
+       
+        int remoteTeam = getTeamId(instance);
+        
+       
+        if (cachedLocalTeam > 1 && cachedLocalTeam == remoteTeam) {
+            return old_SoldierRemoteController(instance, dt);
+        }
+
+       
+        float enX = GetPositionX(instance);
+        float enY = GetPositionY(instance);
+
+       
+        float dx = cachedLocalX - enX;
+        float dy = cachedLocalY - enY;
+
+        
+        float distSq = (dx * dx) + (dy * dy);
+
+      
+        if (distSq < closestDistSq) {
+           
+                closestDistSq = distSq;
+                bestCandidate = instance;
+               
+            
+        }
+    } 
+ }
+
+    return old_SoldierRemoteController(instance, dt);
+} 
+
+
+float (*old_FireAngle)(void* instance);
+float FireAngle(void* instance) {
+    if (instance != NULL && localPlayer != NULL && currentTarget != NULL) {
+        
+       
+        if (!isdead(currentTarget) || gethp(currentTarget) > 0) {
+            
+            
+           
+            float px = GetPositionX(localPlayer);
+            float py = GetPositionY(localPlayer);
+            
+            float ex = GetPositionX(currentTarget);
+            float ey = GetPositionY(currentTarget);
+
+            float dx = ex - px;
+            float dy = py - ey;
+            
+            
+            float angleRad = atan2f(dy, dx);
+            float angleDeg = angleRad * RAD2DEG; 
+            
+            
+            if (angleDeg < 0) angleDeg += 360.0f;
+
+            getfirdsingde = angleDeg;
+           
+        
+        if (isAimbot && switc == 0) {
+               
+                return angleDeg;
+            }
+            
+            if (isAimbot && switc == 1 && isfring) {
+            
+                return angleDeg;
+            }
+            
+            if (isAimbot && switc == 2 && iscrousg(localPlayer)) {
+            
+                return angleDeg;
+            }
+            
+           }
+    }
+    
+    return old_FireAngle(instance);
+}
+
+float (*old_bullat)(void* instance);
+float bullat(void* instance){
+    if (instance != NULL){
+        if(bullet_trake){
+            return getfirdsingde;
+        }
+    }
+    return old_bullat(instance);
+}
+
+
+
+float (*old_Dualfire)(void* instance);
+float Dualfire(void* instance){
+    if (instance != NULL){
+        if(bullet_trake){
+            return getfirdsingde;
+        }
+    }
+    return old_Dualfire(instance);
+}
+
+
+
+
+
+void (*punch)(void* instance);
+void (*onPressGrenade)(void* instance);
+
+
+
+void (*old_hud)(void* instance, float dt);
+void hud(void* instance, float dt) {
+     
+     if (instance != NULL){
+        if (automille && currentTarget != NULL){
+            if (!isdead(currentTarget) || gethp(currentTarget) > 0) {
+           
+             float mypy = GetPositionY(localPlayer);
+             float mypx = GetPositionX(localPlayer);
+       
+             float enpy = GetPositionY(currentTarget);
+             float enpx = GetPositionX(currentTarget);
+       
+             float dy = enpy - mypy;
+             float dx = enpx - mypx;
+       
+             float distSq = (dx * dx) + (dy * dy);
+             destincence = distSq;
+             if (distSq < 4000){
+              punch(instance);
+          
+             }
+           }
+        }
+        if (autothrowg){
+            onPressGrenade(instance);
+        }
+     }
+ return old_hud(instance, dt);
+}
+
+
+
+
+bool ESPRadar; // Add this global variable
+
+void DrawESP(AadilDrawing esp, int width, int height) {
+
+//std::string any = std::to_string(git);
+
+//esp.DrawText(Color(0, 100, 255, 255), "virusmodz", Vector2(width / 2, height / 3.7), 20);
+   Vector2 DrawFrom = Vector2(width / 2, height / 2); 
+    if (!localPlayer && !ESPRadar) return;
+
+    
+    float radarRadius = 100.0f; 
+    Vector2 radarCenter = Vector2(width - 120, 120);
+    float scale = 29.0f; 
+
+    
+    esp.DrawCircle(Color(255, 255, 255, 150), 2.0f, radarRadius, radarCenter);
+    esp.DrawFilledCircle(Color(50, 50, 50, 100), radarRadius, radarCenter);
+
+  
+    esp.DrawFilledCircle(Color(0, 100, 255, 255), 4.0f, radarCenter);
+
+    float localX = GetPositionX(localPlayer);
+    float localY = GetPositionY(localPlayer);
+
+    for (void *player : playerslist) {
+        if (player && gethp(player) > 0 || !isdead(player)) {
+            // Calculate distance
+            float enX = GetPositionX(player);
+            float enY = GetPositionY(player);
+            
+            std::string pid = getPeerID(player);
+             
+         //  Vector2 endps = WorldToScreen(player);
+
+            float relX = (enX - localX) / scale;
+            float relY = (enY - localY) / scale;
+
+            
+            if ((relX * relX + relY * relY) <= (radarRadius * radarRadius)) {
+                Vector2 dotPos = Vector2(radarCenter.x + relX, radarCenter.y - relY);
+                
+                
+                if (getTeamId(localPlayer) > 1 && getTeamId(localPlayer) != getTeamId(player)){
+                    esp.DrawFilledCircle(Color(255, 0, 0, 255), 4.0f, dotPos); 
+                } else if(getTeamId(localPlayer) > 1 && getTeamId(localPlayer) == getTeamId(player)) {
+                    esp.DrawFilledCircle(Color(0, 255, 0, 255), 4.0f, dotPos);
+                } else{
+                    esp.DrawFilledCircle(Color(255, 0, 0, 255), 4.0f, dotPos); 
+                }
+
+               
+                if (isaimsight) {
+                    float angle = getFireAngle(player); 
+                    float angleRad = angle * (3.14159265f / 180.0f); 
+                    float lineLength = 15.0f; 
+                    float endX = dotPos.x + (lineLength * cos(angleRad));
+                    float endY = dotPos.y + (lineLength * sin(angleRad));
+
+                    esp.DrawLine(Color(255, 255, 0, 255), 1.5f, dotPos, Vector2(endX, endY));
+                }
+            
+            }
+            
+            if (plIDS && (relX * relX + relY * relY) <= (radarRadius * radarRadius)){
+                Vector2 dotPos = Vector2(radarCenter.x + relX, radarCenter.y - relY);
+                esp.DrawText(Color(100, 185, 197, 255), pid.c_str(), dotPos, 20);
+            }
+  
+  
+        } else {
+            playerslist.erase(player);
+        }
+    }
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_support_Menu_onGraphValueChanged(JNIEnv *env, jobject thiz, jfloat x, jfloat y) {
+  teleportX = x;
+   teleportY = y;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ void Draw(JNIEnv *env, jobject cls, jobject espview, jobject cvs) {
+    aadildrawing = AadilDrawing(env, espview, cvs);
+    if (aadildrawing.isValid()) DrawESP(aadildrawing, aadildrawing.getWidth(), aadildrawing.getHeight());
+}
+// we will run our hacks in a new thread so our while loop doesn't block process main thread
+void *hack_thread(void *) {
+    LOGI(OBFUSCATE("pthread created"));
+
+    
+    ProcMap il2cppMap;
+ 
+    //Check if target lib is loaded
+    do {
+        sleep(1);
+    } while (!isLibraryLoaded(targetLibName));
+
+    //Anti-lib rename
+    /*
+    do {
+        sleep(1);
+    } while (!isLibraryLoaded("libYOURNAME.so"));*/
+
+    LOGI(OBFUSCATE("%s has been loaded"), (const char *) targetLibName);
+
+#if defined(__aarch64__) //To compile this code for arm64 lib only. Do not worry about greyed out highlighting code, it still works
+    
+
+
+#else //To compile this code for armv7 lib only.
+
+//HOOKSYM_LIB("libcocos2dcpp.so", "_ZN6Weapon15getWeightFactorEv", playerspeed, old_playerspeed);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN23SoldierRemoteController10updateStepEf", SoldierRemoteController, old_SoldierRemoteController);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN22SoldierLocalController15updateModifiersEf", SoldierLocalController, old_SoldierLocalController);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN17SoldierController15removeBodyShapeEv", removebody, old_removebody);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN6Joypad12getFireAngleEv", FireAngle, old_FireAngle);
+GetPositionX = (float(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7cocos2d6CCNode12getPositionXEv"));
+GetPositionY = (float(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7cocos2d6CCNode12getPositionYEv"));
+getTeamId = (int(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN15CollisionObject9getTeamIdEv"));
+gethp = (int(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN17SoldierController5getHPEv"));
+isdead = (bool(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN17SoldierController6isDeadEv"));
+SettPositionY = (void(*)(void *, float))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7cocos2d6CCNode12setPositionYEf"));
+SettPositionX = (void(*)(void *, float))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7cocos2d6CCNode12setPositionXEf"));
+
+/*
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN6Joypad4fireEv", isfire, old_isfire);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN22SoldierLocalController16getDualFireAngleEv", Dualfire, old_Dualfire);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN22SoldierLocalController12getFireAngleEv", bullat, old_bullat);
+
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN3HUD10updateStepEf", hud, old_hud);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN8FRAGNADE14updateItemStepEf", fragnade, Old_fragnade);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN7cocos2d11CCScheduler6updateEf", CCScheduler, old_CCScheduler);
+
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN7GASNADE14updateItemStepEf", gasnade, Old_gasnade);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN9PROXYNADE14updateItemStepEf", proxynade, old_proxynade);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN7EMPNADE14updateItemStepEf", empnade, old_empnade);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN6Weapon14updateItemStepEf", Weapon, old_Weapon);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN14NetworkManager20updateNetworkObjectsEf", updateNetworkObjects, old_updateNetworkObjects);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN6Weapon8getRangeEv", bulletrenhe, old_bulletrenhe);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN6Weapon16getRoundsPerFireEv", RoundsPerFire, old_RoundsPerFire);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN18GameCustomizeLayer13setMaxPlayersEi", setMaxPlayers, old_setMaxPlayers);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN9ProxyMine10updateStepEf", ProxyMine, old_ProxyMine);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN13WeaponManager10updateStepEf", WeaponManager, old_WeaponManager);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN3HUD10updateStepEf", lSoldierView, old_lSoldierView);
+HOOKSYM_LIB("libcocos2dcpp.so", "_ZN10LaserSight10updateStepEff", LaserSight, Old_LaserSight);
+
+
+
+
+
+hexPatches.lagitshealf = MemoryPatch::createWithHex("libcocos2dcpp.so", 0x5b2108, "01 00 A0 E3 1E FF 2F E1");
+
+
+shouldSpawnItem = (void(*)(void *, void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN13WeaponManager14addItemToWorldEP4Itemb"));
+setMaxPlayers2 = (void(*)(void *, int))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN14NetworkManager13setMaxPlayersEi"));
+showLabel1 = (void(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN11SoldierView9showLabelEv"));
+removeAllWeapons = (void(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN13WeaponManager16removeAllWeaponsEv"));
+removeMine = (void(*)(void *, bool))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN9ProxyMine10removeMineEb"));
+activatePlayer = (void(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN22SoldierLocalController14activatePlayerEv"));
+deactivatePlayer = (void(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN22SoldierLocalController16deactivatePlayerEv"));
+addGrenade = (void(*)(void *, void*))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN22SoldierLocalController10addGrenadeEP6Weapon"));
+addWeapon = (void(*)(void *, void*))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN22SoldierLocalController9addWeaponEP6Weapon"));
+getPeerID = (std::string (*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN17SoldierController9getPeerIDEv"));
+getFireAngle = (float (*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN17SoldierController12getFireAngleEv"));
+setClip = (void(*)(void *, int))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN6Weapon7setClipEi"));
+sendPlayerPunch = (void(*)(void *, void*))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN14NetworkManager15sendPlayerPunchEPN7cocos2d8CCObjectE"));
+FRAGNADEinit = (bool(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN8FRAGNADE4initEv"));
+setAnimationInterval = (void (*)(void*, double))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7cocos2d21CCDisplayLinkDirector20setAnimationIntervalEd"));
+sharedDirector = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7cocos2d10CCDirector14sharedDirectorEv"));
+setSpeedMod = (void(*)(void *, float))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN6Weapon11setSpeedModEf"));
+getRate = (float(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN6Weapon7getRateEv"));
+setAccuracyMod = (void(*)(void *, float))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN6Weapon14setAccuracyModEf"));
+setRate = (void(*)(void *, float))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN6Weapon7setRateEf"));
+iscrousg = (bool(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN17SoldierController8isDuckedEv"));
+punch = (void(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN3HUD18onPressMeleeButtonEPN7cocos2d8CCObjectE"));
+onPressGrenade = (void(*)(void *))dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN3HUD20onPressGrenadeButtonEPN7cocos2d8CCObjectE"));
+
+Deagle6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN6DEAGLE6createEv"));
+Magnum6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN6MAGNUM6createEv"));
+Tec96create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN4TEC96createEv"));
+GdDeagle6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7GDEAGLE6createEv"));
+Uzi6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN3UZI6createEv"));
+Mp56create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN3MP56createEv"));
+Tavor6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN5TAVOR6createEv"));
+Ak476create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN4AK476createEv"));
+Xm86create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN3XM86createEv"));
+M166create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN3M166createEv"));
+Aa126create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN4AA126createEv"));
+Spas126create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7SHOTGUN6createEv"));
+M18816create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN5M18816createEv"));
+M146create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN3M146createEv"));
+M93ba6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN5M93BA6createEv"));
+Flamethrower6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN12FLAMETHROWER6createEv"));
+Rg66create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN3RG66createEv"));
+Smaw6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN4SMAW6createEv"));
+Sawgun6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN6SAWGUN6createEv"));
+Machete6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7MACHETE6createEv"));
+FlagBlue6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN8FLAGBLUE6createEv"));
+FlagOrange6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN10FLAGORANGE6createEv"));
+BombBlue6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN8BOMBBLUE6createEv"));
+BombOrange6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN10BOMBORANGE6createEv"));
+Phasr6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN5PHASR6createEv"));
+Minigun6create = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7MINIGUN6createEv"));
+
+EMPNADEcreate = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7EMPNADE6createEv"));
+FRAGNADEcreate = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN8FRAGNADE6createEv"));
+GASNADEcreate = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN7GASNADE6createEv"));
+PROXYNADEcreate = (void* (*)())dlsym(dlopen(targetLibName, 4), OBFUSCATE("_ZN9PROXYNADE6createEv"));
+
+*/
+
+
+
+    LOGI(OBFUSCATE("Done"));
+#endif
+
+    //Anti-leech
+  /*  if (!iconValid || !initValid || !settingsValid) {
+        //Bad function to make it crash
+        sleep(5);
+        int *p = 0;
+        *p = 0;
+    }*/
+    
+    
+
+    return NULL;
+}
+
+// Do not change or translate the first text unless you know what you are doing
+// Assigning feature numbers is optional. Without it, it will automatically count for you, starting from 0
+// Assigned feature numbers can be like any numbers 1,3,200,10... instead in order 0,1,2,3,4,5...
+// ButtonLink, Category, RichTextView and RichWebView is not counted. They can't have feature number assigned
+// Toggle, ButtonOnOff and Checkbox can be switched on by default, if you add True_. Example: CheckBox_True_The Check Box
+// To learn HTML, go to this page: https://www.w3schools.com/
+
+jobjectArray GetFeatureList(JNIEnv *env, jobject context) {
+    jobjectArray ret;
+
+    const char *features[] = {
+        
+       OBFUSCATE("Collapse_Players Mods"),
+       OBFUSCATE("5_CollapseAdd_Toggle_Auto Punch_For Pro players"),
+       OBFUSCATE("6_CollapseAdd_SeekBarDec_Speed_0.0000_3.0000"),
+       OBFUSCATE("14_CollapseAdd_Toggle_Unlimited Boost"),
+       OBFUSCATE("15_CollapseAdd_Toggle_High Melee Length_long range punch"), 
+       OBFUSCATE("16_CollapseAdd_Toggle_Instead Fly_Instead, 'fly' means to fly without delay."),//9
+       OBFUSCATE("17_CollapseAdd_Toggle_Magic Melee Punch"),//9
+       OBFUSCATE("18_CollapseAdd_Toggle_Magic Grenade"),
+       OBFUSCATE("19_CollapseAdd_Toggle_Seend Punch_Show Fake Punch 👊 to Enemy"),
+       OBFUSCATE("20_CollapseAdd_Toggle_Hide Your Weapons"),//9
+       OBFUSCATE("21_CollapseAdd_Toggle_Hide Punch_enemy can't see your punch"),//9
+       OBFUSCATE("58_CollapseAdd_Toggle_Fake Lag_enemy see your player lagging "),//9
+       OBFUSCATE("22_CollapseAdd_ButtonOnOff_Invisible Mod"),//9
+       OBFUSCATE("23_CollapseAdd_Toggle_True_Remove Ads"),
+       
+    
+       OBFUSCATE("Collapse_AimBot"),
+       OBFUSCATE("3_CollapseAdd_Toggle_Free Aim"),
+       OBFUSCATE("1_CollapseAdd_Toggle_AIMBOT"),
+       OBFUSCATE("2_CollapseAdd_RadioButton_Aimbot Mod_Normal Aim,Fire Aim,Crouch Aim"),         
+       
+       OBFUSCATE("Collapse_Teleoprt"),
+       OBFUSCATE("4_CollapseAdd_Button_Teleport/R"),
+       OBFUSCATE("59_CollapseAdd_Toggle_Tell Kill 2_automatic teleport to enemy after 3 second"),//9
+       OBFUSCATE("8_CollapseAdd_Toggle_Tell Nade_teleport any grenade to enemy"),
+       OBFUSCATE("11_CollapseAdd_Graph_Teleport_3_6_2_6"),
+       OBFUSCATE("12_CollapseAdd_Button_Teleport"),
+       
+       OBFUSCATE("Collapse_ESP"),
+       OBFUSCATE("9908_CollapseAdd_Toggle_Enable ESP_imp"),
+       OBFUSCATE("46_CollapseAdd_Toggle_ESP Radar"),
+       OBFUSCATE("48_CollapseAdd_Toggle_Aimsight"),
+       OBFUSCATE("47_CollapseAdd_Toggle_Players ID"),
+       
+       
+       
+       OBFUSCATE("Collapse_Enemy Manager"),
+       OBFUSCATE("24_CollapseAdd_Toggle_Enemy Shield Not Working"),//9
+       OBFUSCATE("25_CollapseAdd_Toggle_Kill Team Mate"),//9
+       OBFUSCATE("57_CollapseAdd_Toggle_Enemy Lebal Never Hind"),//9
+       
+       
+       OBFUSCATE("Collapse_Weapons Mods"),
+       OBFUSCATE("10_CollapseAdd_SeekBarDec_FireRate [BETA]_0.0000_1.0000"),
+       OBFUSCATE("9_CollapseAdd_SeekBarDec_Bullet Speed_0.0000_10.0000"),
+       OBFUSCATE("26_CollapseAdd_Toggle_Auto Fire"),//9
+       OBFUSCATE("27_CollapseAdd_Toggle_No Dual Throw"),//9
+       OBFUSCATE("28_CollapseAdd_Toggle_All Weapon Laser"),//9
+       OBFUSCATE("29_CollapseAdd_Toggle_No Bullet Spread"),//9
+       OBFUSCATE("30_CollapseAdd_Toggle_Enable Weapon Drop"),//9
+       OBFUSCATE("31_CollapseAdd_Toggle_Magic Zoom"),//9
+       
+       
+       OBFUSCATE("Collapse_Game Manager"),
+       OBFUSCATE("7_CollapseAdd_SeekBarDec_Game Speed_0.0000_10.0000"),
+       OBFUSCATE("13_CollapseAdd_SeekBarDec_Game FPS_0.0000_10.0000"),
+       OBFUSCATE("32_CollapseAdd_Toggle_Fly Through Walls_enable before game start"),//9
+       OBFUSCATE("33_CollapseAdd_Toggle_Anti Gravity_enable before the game start"),//9
+       OBFUSCATE("34_CollapseAdd_Spinner_Radar_default,Radar 1,Radar 2"),
+       OBFUSCATE("35_CollapseAdd_Toggle_Game Run In Background"),//9
+       OBFUSCATE("50_CollapseAdd_Toggle_12 Player In Rank"),
+       
+       OBFUSCATE("Collapse_Offline"),
+       OBFUSCATE("36_CollapseAdd_Toggle_Unlimited Health"),
+       OBFUSCATE("37_CollapseAdd_Toggle_Unlimited Ammo"),
+       OBFUSCATE("38_CollapseAdd_Toggle_No Reload"),
+       OBFUSCATE("39_CollapseAdd_Toggle_Bullet Through Walls"),
+       OBFUSCATE("40_CollapseAdd_Toggle_Max Bullet Range"),
+       OBFUSCATE("41_CollapseAdd_Toggle_Max Bullet Damage"),
+       OBFUSCATE("42_CollapseAdd_Toggle_Max Melee Damage"),
+       OBFUSCATE("43_CollapseAdd_Toggle_Any Gun Dual Wield"),
+       OBFUSCATE("44_CollapseAdd_SeekBar_Bullet Per Shot_0_25"), // 9
+       OBFUSCATE("45_CollapseAdd_Spinner_Add Weapon_OFF,DEAGLE,MAGNUM,TEC9,GDEAGLE,UZI,MP5,TAVOR,AK47,XM8,M16,AA12,SPAS12,M1881,M14,M93BA,FLAMETHROWER,RG6,SMAW,SAW GUN,MINIGUN,MACHETE,FLAG BLUE,FLAG ORANGE,BOMB BLUE,BOMB ORANGE,PHASR"),
+       OBFUSCATE("60_CollapseAdd_Toggle_Spwn"),
+       OBFUSCATE("49_CollapseAdd_Spinner_Add Grenade_OFF,EMPNADE,FRAGNADE,PROXYNADE,GASNADE"),
+      
+       OBFUSCATE("Collapse_VIP MODS"),
+       OBFUSCATE("51_CollapseAdd_Toggle_Magic Bullet_enable in lobby and you cannot disable magic bullet in game you need to exit the game to disable it"),
+       OBFUSCATE("52_CollapseAdd_Button_Disappear/R"),
+       OBFUSCATE("53_CollapseAdd_Toggle_Freeze Tokens_using this mode you can create unlimited rank match without spending a single token"),
+       OBFUSCATE("54_CollapseAdd_Toggle_Remove Proxy"),
+       OBFUSCATE("55_CollapseAdd_Toggle_Remove HeadShield_enable in lobby"),
+       OBFUSCATE("56_CollapseAdd_Toggle_Remove MapeItems"),
+       OBFUSCATE("61_CollapseAdd_Toggle_show"),
+        
+        
+        
+        
+    };
+
+    //Now you dont have to manually update the number everytime;
+    int Total_Feature = (sizeof features / sizeof features[0]);
+    ret = (jobjectArray)
+            env->NewObjectArray(Total_Feature, env->FindClass(OBFUSCATE("java/lang/String")),
+                                env->NewStringUTF(""));
+
+    for (int i = 0; i < Total_Feature; i++)
+        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
+
+    return (ret);
+}
+
+void Changes(JNIEnv *env, jclass clazz, jobject obj, jint featNum, jstring featName, 
+                                        jint value1, jint value2, jint value3, jint value4,
+                                        jboolean boolean, jstring str, jlong jng, jshort sht, jdouble dub) {
+                                        
+ /*void Changes(JNIEnv *env, jclass clazz, jobject obj,
+                                        jint featNum, jstring featName, jint value,
+                                        jboolean boolean, jstring str) { */
+
+    LOGD(OBFUSCATE("Feature name: %d - %s | Value: = %d | Bool: = %d | Text: = %s"), featNum,
+         env->GetStringUTFChars(featName, 0), value1,
+         boolean, str != NULL ? env->GetStringUTFChars(str, 0) : "");
+
+    //BE CAREFUL NOT TO ACCIDENTLY REMOVE break;
+
+    switch (featNum) {
+          
+        case 1:
+            isAimbot = boolean;
+        break;
+        case 2:
+            switch (value1) {
+               
+              case 1:
+                    switc = 0;
+                    break;
+              case 2:
+                    switc = 1;
+                    break;
+              case 3:
+                    switc = 2;
+              break;
+            }
+            
+          break;
+          case 3:
+          bullet_trake = boolean;
+
+          break;
+          case 4:
+          isteleport = true;
+          break;
+          case 5:
+          automille = boolean;
+          break;
+          case 6:
+          isplayerspeed = dub;
+          break;
+          case 7:
+          istimescal = dub;
+          break;
+          case 8:
+          tpnadeto = boolean;
+          break;
+          case 9:
+           issetSpeedMod = dub;
+          break;
+          case 10:
+          issetRate = dub;
+          break;
+          case 12:
+          isteleport2 = true;
+          break;
+          case 13:
+          isFps = dub;
+          break;
+          case 14:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN22SoldierLocalController8hasPowerEv", "01 00 A0 E3 1E FF 2F E1", boolean);   
+          break;
+          case 15:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN6Weapon14getMeleeLengthEv", "FF 0F 0F E3 1E FF 2F E1", boolean);
+          break;
+          case 16:
+          PATCH_LIB_SWITCH("libcocos2dcpp.so", "0x7a23a8", "00 F0 20 E3", boolean);
+          break;
+          case 17:
+          PATCH_LIB_SWITCH("libcocos2dcpp.so", "0x4f1888", "00 1A B7 EE", boolean);
+          break;
+          case 18:
+          PATCH_LIB_SWITCH("libcocos2dcpp.so", "0x4f199c", "08 1A B7 EE", boolean);
+          break;
+          case 19:
+          isseendpunc = boolean;
+          break;
+          case 20:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN14NetworkManager16sendWeaponChangeEPN7cocos2d8CCObjectE", "1E FF 2F E1", boolean);
+          break;
+          case 21:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN14NetworkManager15sendPlayerPunchEPN7cocos2d8CCObjectE", "01 00 A0 E3 1E FF 2F E1", boolean);
+          break;
+          case 22:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN14NetworkManager16sendPositionDataEfb", "1E FF 2F E1", boolean);
+          break;
+          case 23:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN20ApplicationInterface18showInterstitialAdEv", "01 00 A0 E3 1E FF 2F E1", boolean);
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN20ApplicationInterface12showAdBannerEv", "01 00 A0 E3 1E FF 2F E1", boolean);
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN20ApplicationInterface16showInterstitialEv", "01 00 A0 E3 1E FF 2F E1", boolean);
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN20ApplicationInterface14showRewardedAdEv", "01 00 A0 E3 1E FF 2F E1", boolean);
+          break;
+          case 24:
+          PATCH_LIB_SWITCH("libcocos2dcpp.so", "0x6baefc", "00 F0 20 E3", boolean);
+          break;
+          case 25:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN22SoldierLocalController10isSameTeamEi", "1E FF 2F E1", boolean);
+          break;
+          case 26:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN6Joypad4fireEv", "01 00 A0 E3 1E FF 2F E1", boolean);
+          break;
+          case 27:
+          PATCH_LIB_SWITCH("libcocos2dcpp.so", "0x7ac4c0", "00 00 A0 E1", boolean);
+          break;
+          case 28:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN13WeaponFactory12isLaserSightE8ItemTypei", "01 00 A0 E3 1E FF 2F E1", boolean);
+          break; 
+          case 29:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN6Weapon20getRandomFiringAngleEv", "01 00 A0 E3 1E FF 2F E1", boolean);  
+          break;
+          case 30:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN3HUD16enableWeaponDropEb", "01 00 A0 E3 1E FF 2F E1", boolean);
+          break;
+          case 31:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN6Weapon11getZoomMaskEv", "00 F0 20 E3", boolean); 
+          break; 
+          case 32:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN10MapManager18addStaticBodyShapeEii", "1E FF 2F E1", boolean);
+          break;
+          case 33:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN10MapManager16getGravityFactorEv", "01 00 A0 E3 1E FF 2F E1", boolean);   
+          break;
+          case 34:
+            switch (value1) {
+            case 0:
+            MemoryPatch::createWithHex(targetLibName, string2Offset(OBFUSCATE("0x6c2c8c")), OBFUSCATE("05 00 00 DA")).Modify();
+            break;
+            case 1:
+            MemoryPatch::createWithHex(targetLibName, string2Offset(OBFUSCATE("0x6c2c8c")), OBFUSCATE("05 00 00 A0")).Modify();
+            break;
+            case 2:
+            MemoryPatch::createWithHex(targetLibName, string2Offset(OBFUSCATE("0x6c2c8c")), OBFUSCATE("04 00 00 EA")).Modify();
+            break;          
+           }
+          break;
+          case 35:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN11AppDelegate36applicationDidEnterBackgroundAndroidEPN7cocos2d8CCObjectE", "1E FF 2F E1", boolean);
+          break;
+          case 36:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN22SoldierLocalController9addDamageEfNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEEib", "01 00 A0 E3 1E FF 2F E1", boolean);
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN11ClientEntry9addDamageEfii", "01 00 A0 E3 1E FF 2F E1", boolean);
+          break;
+          case 37:
+          isammos = boolean;  
+          break;
+          case 38:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN6Weapon13getReloadTimeEv", "01 00 A0 E3 1E FF 2F E1", boolean);
+          break;
+          case 39:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN6Tracer7onSparkE18cpSegmentQueryInfoP7cpShapeb", "1E FF 2F E1", boolean);
+          break;
+          case 40:
+          Isbulletrenhe = boolean;
+          break;
+          case 41:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN6Weapon9getDamageEv", "02 01 E0 E3 1E FF 2F E1", boolean);  
+          break;
+          case 42:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN6Weapon14getMeleeDamageEv", "02 01 E0 E3 1E FF 2F E1", boolean);
+          break;
+          case 43:
+          PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN6Weapon11isDualWieldEv", "01 00 A0 E3 1E FF 2F E1", boolean);  
+          break;
+          case 44:
+          IsRoundsPerFire = value1;
+          break;
+          case 45:
+    switch (value1) {
+        case 0:
+            WeaponID = 0; // OFF or no selection
+            break;
+        case 1:
+            WeaponID = 1; // DEAGLE
+            break;
+        case 2:
+            WeaponID = 2; // MAGNUM
+            break;
+        case 3:
+            WeaponID = 3; // TEC9
+            break;
+        case 4:
+            WeaponID = 4; // GDEAGLE
+            break;
+        case 5:
+            WeaponID = 5; // UZI
+            break;
+        case 6:
+            WeaponID = 6; // MP5
+            break;
+        case 7:
+            WeaponID = 7; // TAVOR
+            break;
+        case 8:
+            WeaponID = 8; // AK47
+            break;
+        case 9:
+            WeaponID = 9; // XM8
+            break;
+        case 10:
+            WeaponID = 10; // M16
+            break;
+        case 11:
+            WeaponID = 11; // AA12
+            break;
+        case 12:
+            WeaponID = 12; // SPAS12
+            break;
+        case 13:
+            WeaponID = 13; // M1881
+            break;
+        case 14:
+            WeaponID = 14; // M14
+            break;
+        case 15:
+            WeaponID = 15; // M93BA
+            break;
+        case 16:
+            WeaponID = 16; // FLAMETHROWER
+            break;
+        case 17:
+            WeaponID = 17; // RG6
+            break;
+        case 18:
+            WeaponID = 18; // SMAW
+            break;
+        case 19:
+            WeaponID = 19; // SAW GUN
+            break;
+        case 20:
+            WeaponID = 20; // MINIGUN
+            break;
+        case 21:
+            WeaponID = 21; // MACHETE
+            break;
+        case 22:
+            WeaponID = 22; // FLAG BLUE
+            break;
+        case 23:
+            WeaponID = 23; // FLAG ORANGE
+            break;
+        case 24:
+            WeaponID = 24; // BOMB BLUE
+            break;
+        case 25:
+            WeaponID = 25; // BOMB ORANGE
+            break;
+        case 26:
+            WeaponID = 26; // PHASR
+            break;
+          }
+          break;
+          case 46:
+          ESPRadar = boolean;
+          break;
+          case 47:
+          plIDS = boolean;
+          break;
+          case 48:
+          isaimsight = boolean;
+          break;
+          case 49:
+        switch (value1) {
+        case 0:
+            GrenadeID = 0; // OFF or no selection
+            break;
+        case 1:
+            GrenadeID = 1; 
+            break;
+        case 2:
+            GrenadeID = 2; 
+            break;
+        case 3:
+            GrenadeID = 3; 
+            break;
+        case 4:
+            GrenadeID = 4; 
+            break;
+            }
+        break;
+         case 50:
+         maxplauers = boolean;
+         break;
+         case 51:
+         PATCH_LIB_SWITCH("libcocos2dcpp.so", "0x7b2374", "04 0A B0 EE", boolean);
+         break;
+         case 52:
+         isdisappear = true;
+         break;
+         case 53:
+         PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN9NagPrompt21onTokenSpendCompletedEPN7cocos2d8CCObjectE", "01 00 A0 E3 1E FF 2F E1", boolean);
+         break;
+         case 54:
+         isremovemine = boolean;
+         break;
+         case 55:
+         PATCH_LIB_SYM_SWITCH("libcocos2dcpp.so", "_ZN23SoldierRemoteController19addDefaultBodyShapeEv", "01 00 A0 E3 1E FF 2F E1", boolean);
+         break;
+         case 56:
+         isremoveItem = boolean;
+         break;
+         case 57:
+         showenemyl = boolean;
+         break;
+         case 58:
+         Autolag = boolean;
+         break;
+         case 59:
+         tellkill2 = boolean;
+         break;
+         case 60:
+         iswwmanspwn = boolean;
+         break;
+         case 61:
+         std::string any = std::to_string(testing1);
+         
+         if (boolean){
+        Toast(env,obj,any.c_str(),ToastLength::LENGTH_LONG);
+            }
+         break;
+          
+            
+         
+    }
+}
+
+__attribute__((constructor))
+void lib_main() {
+    
+    InitializeLogger();
+    // Create a new thread so it does not block the main thread, means the game would not freeze
+    pthread_t ptid;
+    pthread_create(&ptid, NULL, hack_thread, NULL);
+}
+
+int RegisterMenu(JNIEnv *env) {
+    JNINativeMethod methods[] = {
+            {OBFUSCATE("Icon"), OBFUSCATE("()Ljava/lang/String;"), reinterpret_cast<void *>(Icon)},
+            {OBFUSCATE("Info"), OBFUSCATE("()Ljava/lang/String;"), reinterpret_cast<void *>(Info)},
+            {OBFUSCATE("IconWebViewData"),  OBFUSCATE("()Ljava/lang/String;"), reinterpret_cast<void *>(IconWebViewData)},
+            {OBFUSCATE("IsGameLibLoaded"),  OBFUSCATE("()Z"), reinterpret_cast<void *>(isGameLibLoaded)},
+            {OBFUSCATE("Init"),  OBFUSCATE("(Landroid/content/Context;Landroid/widget/TextView;Landroid/widget/TextView;)V"), reinterpret_cast<void *>(Init)},
+            {OBFUSCATE("SettingsList"),  OBFUSCATE("()[Ljava/lang/String;"), reinterpret_cast<void *>(SettingsList)},
+            {OBFUSCATE("GetFeatureList"),  OBFUSCATE("()[Ljava/lang/String;"), reinterpret_cast<void *>(GetFeatureList)},
+            {OBFUSCATE("Draw"),  OBFUSCATE("(Lcom/android/support/ESPView;Landroid/graphics/Canvas;)V"), reinterpret_cast<void *>(Draw)},
+ 
+    };
+
+    jclass clazz = env->FindClass(OBFUSCATE("com/android/support/Menu"));
+    if (!clazz)
+        return JNI_ERR;
+    if (env->RegisterNatives(clazz, methods, sizeof(methods) / sizeof(methods[0])) != 0)
+        return JNI_ERR;
+    return JNI_OK;
+}
+
+int RegisterPreferences(JNIEnv *env) {
+    JNINativeMethod methods[] = {
+             {OBFUSCATE("Changes"), OBFUSCATE("(Landroid/content/Context;ILjava/lang/String;IIIIZLjava/lang/String;JSD)V"), reinterpret_cast<void *>(Changes)},
+    };
+    jclass clazz = env->FindClass(OBFUSCATE("com/android/support/Preferences"));
+    if (!clazz)
+        return JNI_ERR;
+    if (env->RegisterNatives(clazz, methods, sizeof(methods) / sizeof(methods[0])) != 0)
+        return JNI_ERR;
+    return JNI_OK;
+}
+
+int RegisterMain(JNIEnv *env) {
+    JNINativeMethod methods[] = {
+            {OBFUSCATE("CheckOverlayPermission"), OBFUSCATE("(Landroid/content/Context;)V"), reinterpret_cast<void *>(CheckOverlayPermission)},
+    };
+    jclass clazz = env->FindClass(OBFUSCATE("com/android/support/Main"));
+    if (!clazz)
+        return JNI_ERR;
+    if (env->RegisterNatives(clazz, methods, sizeof(methods) / sizeof(methods[0])) != 0)
+        return JNI_ERR;
+
+    return JNI_OK;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv *env;
+    vm->GetEnv((void **) &env, JNI_VERSION_1_6);
+    if (RegisterMenu(env) != 0)
+        return JNI_ERR;
+    if (RegisterPreferences(env) != 0)
+        return JNI_ERR;
+    if (RegisterMain(env) != 0)
+        return JNI_ERR;
+    return JNI_VERSION_1_6;
+}
